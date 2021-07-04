@@ -1,4 +1,5 @@
 const express = require('express');
+const {port} = require('./env/development.env');
 module.exports = () => {
 
     const app = express();
@@ -8,13 +9,14 @@ module.exports = () => {
     app.use(express.json());
 
     // routes
-    /*app.use(require('./routes'));
+    app.use(require('../app/routes'));
+    /*
     app.use('/api/movies', require('./routes/movies'));
     app.use('/api/users', require('./routes/users'));*/
 
     // starting the server
-    app.listen(3000, () => {
-        console.log(`Server on port 3000`);
+    app.listen(port, () => {
+        console.log(`Server listening on port ${port}`);
     });
     
     return app;

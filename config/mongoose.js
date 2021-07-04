@@ -1,8 +1,9 @@
+const mongoose = require('mongoose');
+const {dbUri} = require('./env/development.env')
 module.exports = () => {
-    const mongoose = require('mongoose');
-    mongoose.connect('mongodb+srv://dbUserAxel:dNR74A7C6q8kU1iP@reworth-cluster.jgsz0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true })
-        .then((db) => console.log("db is connected"))
-        .catch((err) => console.log(err));
+    mongoose.connect(dbUri, { useNewUrlParser: true, useUnifiedTopology: true })
+        .then(() => console.log("db is connected successfully"))
+        .catch((err) => console.log(`error connecting the database ${err}`));
 };
 
 //dNR74A7C6q8kU1iP
