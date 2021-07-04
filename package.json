@@ -1,0 +1,26 @@
+{
+  "name": "reworth-prueba",
+  "version": "1.0.0",
+  "description": "- ~~CREATE GIT REPO~~\r - ~~INITIALIZE NODE PROYECT~~\r - ADD EXPRESSJS\r - CONFIGURATE EXPRESSJS SERVER\r - CREATE MONGODB ATLAS COLLECTION\r - GENERATE ACCESS TO ATLAS\r - CREATE DB ACCESS\r - RUN AND TEST SERVER\r - GENERATE SPOTIFY API CREDENTIALS\r - CREATE ENDPOINT ARTIST SEARCH\r - CREATE ENDPOINT USER PROFILE SEARCH\r - SAVE DATA FROM USER SEARCH\r - CREATE UPDATE ENDPOINT TO UPDATE DISPLAY NAME AND COUNTRY FROM USER SAVED\r - CREATE TOP TRACKS ENDPOINT WITH NAME RELEASE DATE AND TOTAL\r - MONGODB COLLECTION SAVING SEARCH QUERIES AND HOW MANY TIMES THEY HAVE BEEN USED\r - ENDPOINT TO GET THE TOP 5 MORE USED QUERIES",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/axelbon/reworth-prueba.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/axelbon/reworth-prueba/issues"
+  },
+  "homepage": "https://github.com/axelbon/reworth-prueba#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.13.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.9"
+  }
+}
