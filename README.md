@@ -41,14 +41,14 @@ Proyecto para proceso de **REWORTH**, implementacion de la api de Spotify.
 <!-- Instalacion -->
 ## Instalacion
 
-To get a local copy up and running follow these simple steps.
+Para poder correr el proyecto local realiza lo siguiente.
 
 
-1. Clone the repo
+1. Clonar el repositorio
    ```sh
    git clone https://github.com/axelbon/reworth-prueba.git
    ```
-2. Install NPM packages
+2. Instalar NPM packages
    ```sh
    npm install
    ```
@@ -64,9 +64,10 @@ para generar tu token debes ingresar en el siguiente url <br>
 _url para generar token_ ``` https://accounts.spotify.com/authorize?client_id=${client_id}&redirect_uri=http://127.0.0.1:3000/&scope=user-read-private%20user-read-email&response_type=token&state=123 ```
 
 Seguir los siguiente pasos:
-1. https://developer.spotify.com/dashboard/login <br>
-2. Cambiar ${client_id} de la url a tu **client_id** <br> 
-3. Iniciar sesion, crear una app, y añadir ``` http://127.0.0.1:3000/ ``` como redirect uri en la configuracion
+1. https://developer.spotify.com/dashboard/login
+3. Iniciar sesion
+2. Cambiar ${client_id} de la url a tu **client_id**
+3. Crear una app, y añadir ``` http://127.0.0.1:3000/ ``` como redirect uri en la configuracion
 4. Cuando se ingrese a el link de **authorize** el url de redireccion tendra el token que se utilizara en el uso de la api
 
 <!-- USO -->
