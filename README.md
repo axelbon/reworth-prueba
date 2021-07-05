@@ -15,6 +15,7 @@
     <li><a href="#auth-token">Auth Token</a></li>
     <li><a href="#uso">Uso</a></li>
     <li><a href="#postman-collection">Postman collection</a></li>
+    <li><a href="#conexion-a-compass">Acceso a la base de datos</a></li>
     <li><a href="#mejoras">Mejoras</a></li>
     <li><a href="#licencia">Licencia</a></li>
   </ol>
@@ -51,6 +52,10 @@ Para poder correr el proyecto local realiza lo siguiente.
 2. Instalar NPM packages
    ```sh
    npm install
+   ```
+3. Correr proyecto
+   ```sh
+   npm start
    ```
 
 
@@ -92,6 +97,11 @@ Para importar la collecion de postman puedes realizarlo con el siguiente link: h
 2. Refactorizar el manejo de errores al hacer consultas o incersiones a la base de datos
 
 3. Refactorizar la manera del manejo de rutas e implementar controllers para tener una mejor estructura del proyecto.
+
+<!-- compass-connection -->
+## Conexion a compass
+
+Puedes ingresar a la gestion de la base de datos a travez de **MongoDB Compass**, con el siguiente uri: ``` mongodb+srv://dbUserAxel:dNR74A7C6q8kU1iP@reworth-cluster.jgsz0.mongodb.net/test?authSource=admin&replicaSet=atlas-2fpngf-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true ```
 
 <!-- licencia -->
 ## Licencia
