@@ -2,35 +2,34 @@ const { Router } = require('express');
 const router = new Router();
 const fetch = require('node-fetch');
 const url = require('../../config/env/development.env').spotifyApiUrl;
-const tokenUrl = require('../../config/env/development.env').spotifyTokenUrl;
 
-//Authorization
-const client_id = 'bf8840bfab164c3ba3211b9c1f32c604'; // Your client id
-const client_secret = '08a3e16292cf4f7fab755d07b3969095'; // Your secret
-
-//https://accounts.spotify.com/authorize?client_id=YmY4ODQwYmZhYjE2NGMzYmEzMjExYjljMWYzMmM2MDQ6MDhhM2UxNjI5MmNmNGY3ZmFiNzU1ZDA3YjM5NjkwOTU=&redirect_uri=http://127.0.0.1:3000/&scope=user-read-private%20user-read-email&response_type=token
-
-
-//logs in for the spotify token
-router.get('/login', async (req, res) => {
-    const { clientId, clientSecret } = req.body;
-    const token = await _getToken(clientId, clientSecret);
-    res.json(token);
-});
+const User = require('../model/user.model');
+const Criterio = require('../model/criterio.model');
 
 //search artist albums
-router.get('/searchArtist', async (req, res) => {
+router.get('/artist/search', async (req, res) => {
     const arti = req.query.q;
     const token = req.headers['spotify-token'];
+
+    const criterio = await createOrUpdateCriterio(arti);
+
+    if (!arti) {
+        res.json('No artista incluido en la query');
+        return;
+    }
+
+    if (!token) {
+        res.json('auth token no encontrado');
+        return;
+    }
+
     //get artist id
-    const artist = await fetch(`${url}/search?q=${arti}&type=artist&market=ES&limit=1`, {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    });
-    const artistData = await artist.json();
-    const id = artistData.artists.items[0].id;
+    const id = await getArtistId(arti, token, res);
+    if (typeof id !== 'string') {
+        res.status(id.status).json(id.message);
+        return;
+    }
+
     //search albums
     const albums = await fetch(`${url}/artists/${id}/albums?market=ES&limit=20`, {
         method: 'GET',
@@ -38,6 +37,7 @@ router.get('/searchArtist', async (req, res) => {
             'Authorization': `Bearer ${token}`
         }
     });
+
     const albumsData = await albums.json();
     let albumsList = {
         artist: arti,
@@ -56,7 +56,6 @@ router.get('/searchArtist', async (req, res) => {
 //search user profile
 router.get('/userProfile', async (req, res) => {
     const token = req.headers['spotify-token'];
-    console.log(token);
     //get user profile
     const user = await fetch(`${url}/me`, {
         method: 'GET',
@@ -67,24 +66,107 @@ router.get('/userProfile', async (req, res) => {
         }
     });
 
+    if (user[Object.getOwnPropertySymbols(user)[1]].statusText === 'Unauthorized') {
+        res.status(401).json(user[Object.getOwnPropertySymbols(user)[1]].statusText);
+        return;
+    }
+
     const userData = await user.json();
-    res.json(userData)
+    const find = await User.findOne({ display_name: userData.display_name }).exec();
+
+    if (find) {
+        res.json(find);
+        return;
+    };
+
+    const userProfile = new User({
+        country: userData.country,
+        display_name: userData.display_name,
+        followers: userData.followers.total,
+        type: userData.type
+    });
+    await userProfile.save();
+
+    res.json({
+        message: 'user saved',
+        userProfile
+    })
 })
 
-//gets spotify token auth
-const _getToken = async (client_id, client_secret) => {
-    const result = await fetch(tokenUrl, {
-        method: 'POST',
+//search artist top tracks
+router.get('/artist/top-tracks', async (req, res) => {
+    const arti = req.query.q;
+    const token = req.headers['spotify-token'];
+    const id = await getArtistId(arti, token);
+
+    const criterio = await createOrUpdateCriterio(arti);
+
+    if (typeof id !== 'string') {
+        res.status(id.status).json(id.message);
+        return;
+    }
+
+    const topTracks = await fetch(`https://api.spotify.com/v1/artists/${id}/top-tracks?market=ES`, {
+        method: 'GET',
         headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + Buffer.from(client_id + ':' + client_secret).toString('base64')
-        },
-        body: 'grant_type=client_credentials'
+            'Authorization': `Bearer ${token}`
+        }
     });
 
-    const data = await result.json();
+    const topTracksData = await topTracks.json();
+    let data = {
+        totalTracks: 0,
+        tracks: [ /*{ name: string, release_date: date }*/]
+    }
 
-    return data;
+    topTracksData.tracks.forEach(track => {
+        data.tracks.push({ name: track.name, release_date: track.album.release_date });
+        data.totalTracks++;
+    });
+
+    res.json(data);
+});
+
+//private function
+//search for artist id
+const getArtistId = async (artitstName, token, res) => {
+    //get artist id
+    const artist = await fetch(`${url}/search?q=${artitstName}&type=artist&market=ES&limit=1`, {
+        method: 'GET',
+        headers: {
+            'Authorization': `Bearer ${token}`
+        }
+    });
+    const artistData = await artist.json();
+    //handle error from fetch
+    if (artistData.error) {
+        return artistData.error;
+    } else {
+        const id = artistData.artists.items[0].id;
+
+        return id;
+    }
+
+}
+
+//private function
+//create or update criterio
+const createOrUpdateCriterio = async (description) => {
+    const criterio =  await Criterio.findOne({descripcion: description});
+
+    if(criterio) {
+        criterio.total = criterio.total + 1;
+        criterio.save();
+        return true;
+    } 
+
+    const newCriterio = new Criterio({
+        descripcion: description,
+        total: 1
+    });
+    newCriterio.save();
+
+    return false;
 };
 
 module.exports = router;

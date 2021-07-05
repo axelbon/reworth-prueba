@@ -11,10 +11,8 @@ module.exports = () => {
     // routes
     app.use(require('../app/routes'));
     app.use(require('../app/routes/spotify'));
-    /*
-    app.use('/api/movies', require('./routes/movies'));
-    app.use('/api/users', require('./routes/users'));*/
-
+    app.use(require('../app/routes/users'));
+    app.use(require('../app/routes/criterio'))
     // starting the server
     app.listen(port, () => {
         console.log(`Server listening on port ${port}`);
